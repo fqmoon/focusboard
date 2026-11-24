@@ -1,7 +1,7 @@
 import { contains, isRect, overlaps, rectOf } from './query.js';
 import type { Element, Line, Rect } from './schema.js';
 import { TIERS } from './tier.js';
-import { charGrid, wrapText } from './text.js';
+import { textGrid, wrapText } from './text.js';
 import type { Issue, LintResult } from './types.js';
 import { validateBoard } from './validate.js';
 
@@ -57,11 +57,11 @@ export function lint(input: unknown): LintResult {
     }
 
     if (rect.text) {
-      const grid = charGrid(rect);
-      if (grid.cols < 1 || grid.rows < 1) {
+      const grid = textGrid(rect);
+      if (grid.columns < 1 || grid.rows < 1) {
         warnings.push(issue('text_overflow', [rect.id], `${rect.id} 放不下任何字格`));
       } else {
-        const lines = wrapText(rect.text, grid.cols).length;
+        const lines = wrapText(rect.text, grid.columns).length;
         if (lines > grid.rows) {
           warnings.push(
             issue('text_overflow', [rect.id], `${rect.id} 文字溢出（${lines} 行 > ${grid.rows} 行）`)

@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
-  charGrid,
-  charWidth,
+  charColumns,
   placeLine,
   textFits,
+  textGrid,
   visibleTextLines,
   wrapText,
   type Rect
@@ -21,67 +21,66 @@ const rect = (overrides: Partial<Rect> = {}): Rect => ({
   ...overrides
 });
 
-test('charGrid divides by textScale', () => {
-  assert.deepEqual(charGrid(rect()), { scale: 1, cols: 3, rows: 2 });
-  assert.deepEqual(charGrid(rect({ textScale: 2, w: 6, h: 4 })), {
+test('textGrid counts columns and divides by textScale', () => {
+  assert.deepEqual(textGrid(rect()), { scale: 1, columns: 6, rows: 2 });
+  assert.deepEqual(textGrid(rect({ textScale: 2, w: 6, h: 4 })), {
     scale: 2,
-    cols: 3,
+    columns: 6,
     rows: 2
   });
 });
 
-test('charWidth gives full-width glyphs one cell and the rest half', () => {
-  assert.equal(charWidth('缓'), 1);
-  assert.equal(charWidth('：'), 1);
-  assert.equal(charWidth('（'), 1);
-  assert.equal(charWidth('a'), 0.5);
-  assert.equal(charWidth(' '), 0.5);
-  assert.equal(charWidth('→'), 0.5);
-  assert.equal(charWidth('🙂'), 1);
+test('charColumns gives full-width glyphs two columns and the rest one', () => {
+  assert.equal(charColumns('缓'), 2);
+  assert.equal(charColumns('：'), 2);
+  assert.equal(charColumns('（'), 2);
+  assert.equal(charColumns('🙂'), 2);
+  assert.equal(charColumns('a'), 1);
+  assert.equal(charColumns(' '), 1);
+  assert.equal(charColumns('→'), 1);
 });
 
-test('wrapText breaks by accumulated cell width', () => {
-  assert.deepEqual(wrapText('缓存层', 3), ['缓存层']);
-  assert.deepEqual(wrapText('缓存层呢', 3), ['缓存层', '呢']);
-  assert.deepEqual(wrapText('a\nb', 3), ['a', 'b']);
-  assert.deepEqual(wrapText('a\n\nb', 3), ['a', '', 'b']);
-  assert.deepEqual(wrapText('a\r\nb', 3), ['a', 'b']);
-  assert.deepEqual(wrapText('abcdef', 3), ['abcdef']);
-  assert.deepEqual(wrapText('abcdefg', 3), ['abcdef', 'g']);
-  assert.deepEqual(wrapText('缓存abc', 3), ['缓存ab', 'c']);
-  assert.deepEqual(wrapText('ab缓', 3), ['ab缓']);
-  assert.deepEqual(wrapText('abc缓', 3), ['abc缓']);
-  assert.deepEqual(wrapText('abc缓缓', 3), ['abc缓', '缓']);
+test('wrapText breaks by accumulated columns', () => {
+  assert.deepEqual(wrapText('缓存层', 6), ['缓存层']);
+  assert.deepEqual(wrapText('缓存层呢', 6), ['缓存层', '呢']);
+  assert.deepEqual(wrapText('a\nb', 6), ['a', 'b']);
+  assert.deepEqual(wrapText('a\n\nb', 6), ['a', '', 'b']);
+  assert.deepEqual(wrapText('a\r\nb', 6), ['a', 'b']);
+  assert.deepEqual(wrapText('abcdef', 6), ['abcdef']);
+  assert.deepEqual(wrapText('abcdefg', 6), ['abcdef', 'g']);
+  assert.deepEqual(wrapText('缓存abc', 6), ['缓存ab', 'c']);
 });
 
 test('wrapText counts code points, not UTF-16 units', () => {
-  assert.deepEqual(wrapText('🙂🙂🙂', 2), ['🙂🙂', '🙂']);
+  assert.deepEqual(wrapText('🙂🙂🙂', 4), ['🙂🙂', '🙂']);
 });
 
-test('placeLine advances half a cell per narrow glyph', () => {
+test('placeLine advances one column per narrow glyph', () => {
   assert.deepEqual(placeLine('ab'), [
-    { ch: 'a', x: 0, w: 0.5 },
-    { ch: 'b', x: 0.5, w: 0.5 }
+    { ch: 'a', x: 0, w: 1 },
+    { ch: 'b', x: 1, w: 1 }
   ]);
 });
 
-test('a full-width glyph after an odd half-width run snaps to the next cell', () => {
+test('a full-width glyph follows the cursor without snapping', () => {
   assert.deepEqual(placeLine('a缓'), [
-    { ch: 'a', x: 0, w: 0.5 },
-    { ch: '缓', x: 1, w: 1 }
+    { ch: 'a', x: 0, w: 1 },
+    { ch: '缓', x: 1, w: 2 }
   ]);
-  assert.deepEqual(placeLine('ab缓b缓'), [
-    { ch: 'a', x: 0, w: 0.5 },
-    { ch: 'b', x: 0.5, w: 0.5 },
-    { ch: '缓', x: 1, w: 1 },
-    { ch: 'b', x: 2, w: 0.5 },
-    { ch: '缓', x: 3, w: 1 }
+  assert.deepEqual(placeLine('abc缓b缓'), [
+    { ch: 'a', x: 0, w: 1 },
+    { ch: 'b', x: 1, w: 1 },
+    { ch: 'c', x: 2, w: 1 },
+    { ch: '缓', x: 3, w: 2 },
+    { ch: 'b', x: 5, w: 1 },
+    { ch: '缓', x: 6, w: 2 }
   ]);
 });
 
-test('every full-width glyph sits inside a whole cell', () => {
+test('every width and offset is a whole number of columns', () => {
   for (const glyph of placeLine('abc缓（Ajv）缓def 缓，好')) {
-    if (glyph.w === 1) assert.equal(Number.isInteger(glyph.x), true, glyph.ch);
+    assert.equal(Number.isInteger(glyph.x), true, glyph.ch);
+    assert.equal(Number.isInteger(glyph.w), true, glyph.ch);
   }
 });
 

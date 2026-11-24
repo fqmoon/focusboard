@@ -1,5 +1,6 @@
 import {
   CELL,
+  COLUMNS_PER_CELL,
   pageOf,
   placeLine,
   visibleTextLines,
@@ -136,11 +137,12 @@ function renderRect(rect: Rect): string {
     const cell = scale * CELL;
     const lines = visibleTextLines(rect);
 
+    const column = cell / COLUMNS_PER_CELL;
     for (let row = 0; row < lines.length; row++) {
       const cy = rect.y * CELL + row * cell + cell / 2;
       for (const glyph of placeLine(lines[row] ?? '')) {
-        const cx = rect.x * CELL + (glyph.x + glyph.w / 2) * cell;
-        const ratio = glyph.w >= 1 ? GLYPH_RATIO_WIDE : GLYPH_RATIO_NARROW;
+        const cx = rect.x * CELL + (glyph.x + glyph.w / 2) * column;
+        const ratio = glyph.w > 1 ? GLYPH_RATIO_WIDE : GLYPH_RATIO_NARROW;
         const size = cell * ratio;
         parts.push(
           `<text x="${cx}" y="${cy}" font-family="${FONT}" font-size="${size}" ` +

@@ -6,9 +6,9 @@
       "type": "rect",
       "x": 1,
       "y": 0,
-      "w": 46,
+      "w": 40,
       "h": 2,
-      "text": "focusboard 0.1.0 架构",
+      "text": "focusboard 运行流程",
       "textScale": 2,
       "border": "none"
     },
@@ -16,70 +16,131 @@
       "id": "agent",
       "type": "rect",
       "x": 1,
-      "y": 4,
+      "y": 3,
       "w": 14,
       "h": 5,
-      "text": "agent\n持有整块板\n每轮全量重发\n无 boardId\n无连接状态"
+      "text": "agent\n产出 tier+elements\n每轮全量重发"
     },
     {
-      "id": "core",
+      "id": "json",
+      "type": "rect",
+      "x": 17,
+      "y": 3,
+      "w": 14,
+      "h": 5,
+      "text": "board.json\n{ tier,\n  elements }\n纯数据，无句柄",
+      "border": "dashed"
+    },
+    {
+      "id": "lint",
+      "type": "rect",
+      "x": 33,
+      "y": 3,
+      "w": 15,
+      "h": 5,
+      "text": "lint(board)\n1 validate/Ajv\n2 几何检查\n3 字数溢出"
+    },
+    {
+      "id": "tosvg",
       "type": "rect",
       "x": 17,
       "y": 10,
+      "w": 14,
+      "h": 5,
+      "text": "toSVG(board)\nwarnings 照画\n元素、档位 → SVG"
+    },
+    {
+      "id": "reject",
+      "type": "rect",
+      "x": 33,
+      "y": 17,
       "w": 15,
-      "h": 9,
-      "text": "core\nschema：唯一契约\n  types 由它推导\nvalidate (Ajv)\nlint：errors 拒画\n  warnings 只警告\nquery · text\ntier 是页参数\n交付：纯函数"
-    },
-    {
-      "id": "svg",
-      "type": "rect",
-      "x": 34,
-      "y": 10,
-      "w": 13,
-      "h": 9,
-      "text": "svg-render\ntoSVG(board)\n元素+档位\n→ SVG 字符串\n一格 = 100u\n线裁到边框\n字按字格排\n不碰 DOM\n无重排重绘"
-    },
-    {
-      "id": "scope",
-      "type": "rect",
-      "x": 26,
-      "y": 3,
-      "w": 20,
-      "h": 6,
-      "text": "0.1.0 不含\n服务 / HTTP / SSE\n持久化 · boardId\n套索 (0.2.0)\n整板 theme (0.3.0)"
+      "h": 4,
+      "text": "errors → 不渲染\n调用方自己报错"
     },
     {
       "id": "host",
       "type": "rect",
-      "x": 34,
-      "y": 22,
-      "w": 13,
+      "x": 17,
+      "y": 17,
+      "w": 14,
       "h": 5,
-      "text": "调用方页面\n自己定传输\n嵌 SVG\n全在 SDK 外"
+      "text": "宿主页面\n自己定传输\n嵌进 DOM"
     },
     {
       "id": "human",
       "type": "rect",
       "x": 1,
-      "y": 22,
+      "y": 17,
       "w": 14,
       "h": 5,
-      "text": "人\n看板\n只说两件事\n不要哪个\n没看懂哪处"
+      "text": "人\n只看图\n说两条：\n不要哪个\n没看懂哪处"
+    },
+    {
+      "id": "dev",
+      "type": "rect",
+      "x": 1,
+      "y": 23,
+      "w": 12,
+      "h": 1,
+      "text": "开发回路",
+      "border": "none"
+    },
+    {
+      "id": "build",
+      "type": "rect",
+      "x": 1,
+      "y": 25,
+      "w": 10,
+      "h": 4,
+      "text": "tsc -p\nESM + d.ts"
+    },
+    {
+      "id": "test",
+      "type": "rect",
+      "x": 13,
+      "y": 25,
+      "w": 11,
+      "h": 4,
+      "text": "node --test\n42 个用例"
+    },
+    {
+      "id": "example",
+      "type": "rect",
+      "x": 26,
+      "y": 25,
+      "w": 13,
+      "h": 4,
+      "text": "npm run example\n→ out/*.svg"
+    },
+    {
+      "id": "shot",
+      "type": "rect",
+      "x": 41,
+      "y": 25,
+      "w": 6,
+      "h": 4,
+      "text": "截图\n回看"
     },
     {
       "id": "note",
       "type": "rect",
       "x": 1,
-      "y": 28,
+      "y": 29,
       "w": 46,
-      "h": 2,
-      "text": "依赖单向：svg-render → core。规则在 core，renderer 只画。\n唯一接口是板数据 JSON { tier, elements }；无服务、无持久化。",
+      "h": 1,
+      "text": "同样的 board + tier 永远出同样的 SVG；样式好坏不进 lint，靠人这一回合。",
       "border": "none"
     },
-    { "id": "e1", "type": "line", "a": "agent", "b": "core", "arrow": "b" },
-    { "id": "e2", "type": "line", "a": "core", "b": "svg", "arrow": "b" },
-    { "id": "e3", "type": "line", "a": "svg", "b": "host", "arrow": "b" },
-    { "id": "e4", "type": "line", "a": "host", "b": "human", "arrow": "b" },
-    { "id": "e5", "type": "line", "a": "human", "b": "agent", "arrow": "b", "style": "dashed" }
+    { "id": "e1", "type": "line", "a": "agent", "b": "json", "arrow": "b" },
+    { "id": "e2", "type": "line", "a": "json", "b": "lint", "arrow": "b" },
+    { "id": "e3", "type": "line", "a": "lint", "b": "tosvg", "arrow": "b" },
+    { "id": "e4", "type": "line", "a": "lint", "b": "reject", "arrow": "b" },
+    { "id": "e5", "type": "line", "a": "tosvg", "b": "host", "arrow": "b" },
+    { "id": "e6", "type": "line", "a": "host", "b": "human", "arrow": "b" },
+    { "id": "e7", "type": "line", "a": "human", "b": "agent", "arrow": "b", "style": "dashed" },
+    { "id": "e8", "type": "line", "a": "build", "b": "test", "arrow": "b" },
+    { "id": "e9", "type": "line", "a": "test", "b": "example", "arrow": "b" },
+    { "id": "e10", "type": "line", "a": "example", "b": "shot", "arrow": "b" }
   ]
 }
