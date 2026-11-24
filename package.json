@@ -1,0 +1,24 @@
+{
+  "name": "focusboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @focusboard/core && npm run build -w @focusboard/svg-render",
+    "test": "npm run build && npm run test:core && npm run test:svg",
+    "test:core": "node --test packages/core/dist/test/*.test.js",
+    "test:svg": "node --test packages/svg-render/dist/test/*.test.js",
+    "example": "npm run build && node examples/host/build.mjs"
+  },
+  "dependencies": {
+    "@focusboard/core": "*",
+    "@focusboard/svg-render": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

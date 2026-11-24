@@ -5,7 +5,7 @@
 它必须能嵌进 agent 的工作流，而 agent 能用的输出通道只有三个：终端、聊天消息、文件。前两个显示不了图形，第三个要人主动去开。**浏览器是唯一同时满足「agent 能写、人已经在看、不用装东西」的显示面。**
 
 - **不用桌面 GUI。** agent 跑在服务器上，窗口开不到人面前；跨平台、分发、更新全变成额外问题。
-- **不用打包产物。** 多一层构建就多一处版本漂移。一个 `index.html` 打开就是一块板，改一行刷新就能看见。
+- **不用桌面产物。** 不做桌面 GUI、不打包成安装包；SDK 用 `tsc` 产出 ESM + 类型声明，源码和产物一一对应。
 - **人不用切换场所。** 人本来就在浏览器里看文档、看网页、看 agent 的产出，板不应该要求再装一个东西。
 
 SDK 只收一串元素，怎么送到页面由调用方决定：HTTP、SSE、文件、postMessage 都行。agent 不理解 UI 状态，只回答"现在这块板上有什么"。
@@ -13,8 +13,6 @@ SDK 只收一串元素，怎么送到页面由调用方决定：HTTP、SSE、文
 这条决定了**全量重画**：渲染器不持有状态，每次按当前元素数组整张画出来，不会留下"改了一半"的中间态。
 
 但全量重画说的是**渲染**，不是源码：元素数组是跨轮存活、持续维护的源码，agent 每次只改需要改的元素，不重写整块板。**重画 ≠ 重写。**
-
-## SDK：两个包，单向依赖
 
 ## SDK：core + 渲染器，单向依赖
 
@@ -53,6 +51,14 @@ SDK 只收一串元素，怎么送到页面由调用方决定：HTTP、SSE、文
 校验分两级：**errors** 管形状和引用（类型、必填、枚举、整数、重复 id、悬空线），不成立就拒绝；**warnings** 管几何（越界、部分重叠、文字溢出、字格不整除），照画并报出来。两者都在 core，不允许宿主自己再写一套。
 
 **几何是唯一真相，core 不持有意义，语义责任 100% 在生成侧。** 别人拿到这份几何能一模一样地重放，但不知道为什么。
+
+## 实现栈
+
+- TypeScript 5 + `tsc`，输出 ESM + `.d.ts`；不用 bundler。
+- core 用 Ajv 8（draft 2020-12）校验唯一的 board schema；API 类型由 `json-schema-to-ts` 从同一份 schema 推导。
+- 测试用 `node:test`，跑编译后的 JS。
+- svg-render 只拼字符串，不碰 DOM。
+- 示例宿主在 `examples/host`，只把 `board.json` 写成 SVG，不是运行时。
 
 ## 原语：只有两个
 
@@ -194,7 +200,7 @@ CSS 度量也可以用（容器查询 `@container`），但选档的结果最终
 两条约束：
 
 - **内缩必须小于半个格。** 否则相邻的框看起来不相邻，而几何上它们是挨着的，人会误判。
-- **内缩和圆角用物理像素。** 理由和线宽一样：逻辑单位在缩放后会归零，小屏上缝和圆角会一起消失，两个框又粘回去。
+- **线宽用物理像素，内缩和圆角用输出单位。** 线宽靠 SVG 的 `non-scaling-stroke` 固定；纯字符串渲染器没有屏幕信息，内缩和圆角只能按输出单位给，宿主若要严格物理像素需按显示缩放调整。
 
 ### 线：中心到中心，裁到边界
 
@@ -296,7 +302,7 @@ lint 分 errors 和 warnings。errors 是“这份输入不成立”，warnings 
 }
 ```
 
-**errors**：`missing_field`、`invalid_type`、`unknown_type`、`invalid_enum`、`not_integer`、`out_of_range`、`duplicate_id`、`dangling_line`。
+**errors**：`missing_field`、`invalid_type`、`unknown_type`、`invalid_enum`、`not_integer`、`out_of_range`、`unknown_field`、`duplicate_id`、`dangling_line`。
 
 **warnings**：`out_of_bounds`、`partial_overlap`、`text_overflow`、`text_scale_misaligned`。完全包含不算 overlap。
 

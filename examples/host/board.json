@@ -1,0 +1,65 @@
+{
+  "tier": "medium",
+  "elements": [
+    {
+      "id": "title",
+      "type": "rect",
+      "x": 1,
+      "y": 1,
+      "w": 34,
+      "h": 2,
+      "text": "focusboard 0.1.0",
+      "textScale": 2,
+      "border": "none"
+    },
+    {
+      "id": "agent",
+      "type": "rect",
+      "x": 2,
+      "y": 14,
+      "w": 14,
+      "h": 5,
+      "text": "agent\n维护元素数组\n跨轮传入"
+    },
+    {
+      "id": "core",
+      "type": "rect",
+      "x": 2,
+      "y": 5,
+      "w": 14,
+      "h": 6,
+      "text": "core\n规则库\n元素模型\n几何查询\nlint / 档位"
+    },
+    {
+      "id": "svg",
+      "type": "rect",
+      "x": 20,
+      "y": 5,
+      "w": 14,
+      "h": 6,
+      "text": "svg-render\n元素 + 档位\n→ SVG 字符串\n不碰 DOM"
+    },
+    {
+      "id": "host",
+      "type": "rect",
+      "x": 20,
+      "y": 14,
+      "w": 14,
+      "h": 5,
+      "text": "调用方\n传输 / 页面\n不在 SDK"
+    },
+    {
+      "id": "note",
+      "type": "rect",
+      "x": 2,
+      "y": 21,
+      "w": 32,
+      "h": 2,
+      "text": "几何是唯一真相；渲染器不做决策。",
+      "border": "none"
+    },
+    { "id": "e1", "type": "line", "a": "agent", "b": "core", "arrow": "b" },
+    { "id": "e2", "type": "line", "a": "core", "b": "svg", "arrow": "b" },
+    { "id": "e3", "type": "line", "a": "svg", "b": "host", "arrow": "b", "style": "dashed" }
+  ]
+}
