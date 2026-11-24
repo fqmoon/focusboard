@@ -4,18 +4,19 @@
 
 core 和 svg-render 已经落成：
 
-- **core**：唯一的 board schema（Ajv 校验）、几何查询、lint（errors / warnings）、字格与档位。
+- **core**：唯一的 board schema（Ajv 校验）、几何查询、lint（errors / warnings）、文字列宽（一格两列）与档位。
 - **svg-render**：`toSVG(board)`，纯字符串，不碰 DOM。
 - **测试**：core 覆盖校验、查询、lint、字格；svg-render 覆盖输出结构、顺序、文字、线。
-- **示例**：`examples/host` 能把 `board.json` 写成 SVG 和一份静态页面。
+- **示例**：`examples/host` 能把 `board.json` 写成 SVG 和一份静态页面；提交一次就回执一次 lint（stdout 是 JSON）。
+- **自检**：`measure()` 与 `npm run check` 报每个框的列宽、折行、行溢出、汉字偏半格；`lint` 报形状与几何。
 
-还没有：agent 的工具契约与真实宿主、0.2.0 套索、0.3.0 样式。现在**能画**，但 agent 还没有稳定的调用入口。
+还没有：0.2.0 套索、0.3.0 样式、跨板组合。工具契约已落地：提交整块板 → 返回 `{ errors, warnings, rendered }`，传输仍由宿主决定。
 
 ## 0.1.0 —— agent 能完整调用并渲染
 
 **目标**：agent 画出并持续维护一块板，并且知道自己画得对不对。
 
-**状态**：core / svg-render 已实现；工具契约与真实宿主待接。
+**状态**：core / svg-render / 工具契约（`set_board`）已实现，四条验收都有实测；剩下的只是把宿主接到真实会话上。
 
 范围：
 

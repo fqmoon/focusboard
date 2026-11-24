@@ -20,6 +20,18 @@ npm run check     # 只读报告：每个框占了几列 / 几行 / 哪里汉字
 
 打开 `examples/host/out/index.html` 可以看到示例板。
 
+## 提交：回执就是 lint
+
+`npm run example` 的 stdout 只有 JSON，这就是全部契约：
+
+```json
+{ "errors": [], "warnings": [], "rendered": true, "wrote": ["...board.svg", "...index.html"] }
+```
+
+- 板先写盘、再 `lint`；**errors 非空就不渲染**，页面留着上一版，画坏一次不会毁掉当前板。
+- 元素 schema 只有一份，在 `core` 里；这里不重新定义任何形状。
+- 板怎么送到这（文件、HTTP、粘贴）、回执怎么回到 agent（stdout、工具返回、日志），都是调用方的事，SDK 不规定。
+
 ## 用法
 
 ```js
