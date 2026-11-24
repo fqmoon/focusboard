@@ -11,7 +11,8 @@
     "test": "npm run build && npm run test:core && npm run test:svg",
     "test:core": "node --test packages/core/dist/test/*.test.js",
     "test:svg": "node --test packages/svg-render/dist/test/*.test.js",
-    "example": "npm run build && node examples/host/build.mjs"
+    "example": "npm run build && node examples/host/build.mjs",
+    "check": "npm run build && node scripts/check.mjs"
   },
   "dependencies": {
     "@focusboard/core": "*",

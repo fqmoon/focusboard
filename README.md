@@ -15,6 +15,7 @@
 npm install
 npm test          # 编译并跑 core / svg-render 的测试
 npm run example   # board.json → examples/host/out/{board.svg,index.html}
+npm run check     # 只读报告：每个框占了几列 / 几行 / 哪里汉字偏半格
 ```
 
 打开 `examples/host/out/index.html` 可以看到示例板。
