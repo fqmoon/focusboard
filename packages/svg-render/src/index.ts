@@ -1,6 +1,7 @@
 import {
   CELL,
   pageOf,
+  placeLine,
   visibleTextLines,
   type Board,
   type Element,
@@ -14,11 +15,21 @@ const INK = '#e9e4d6';
 const LINE_INK = '#8fb3a3';
 
 const INSET = 2;
-const RADIUS = 6;
+/** Corner radius in cells: scales with the board, unlike the stroke. */
+const RADIUS = CELL * 0.18;
 const STROKE = 1.5;
-const ARROW_LEN = 22;
-const ARROW_HALF = 7;
-const GLYPH_RATIO = 0.82;
+/** Arrow geometry is in cells, so it stays proportional to the board. */
+const ARROW_LEN = CELL * 0.55;
+const ARROW_HALF = CELL * 0.22;
+/** Arrows eat at most this share of a short line. */
+const ARROW_MAX_SHARE = 0.4;
+/**
+ * Font size as a share of the character cell. Full-width glyphs sit a bit
+ * smaller so they do not fill the cell; half-width glyphs need a bigger
+ * font-size to span their half cell, otherwise Latin drifts apart again.
+ */
+const GLYPH_RATIO_WIDE = 0.72;
+const GLYPH_RATIO_NARROW = 0.78;
 
 const FONT =
   "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono CJK SC', monospace";
@@ -90,17 +101,19 @@ function arrowPath(tip: Point, toward: Point): string {
   const len = Math.hypot(dx, dy);
   if (len === 0) return '';
 
+  const size = Math.min(ARROW_LEN, len * ARROW_MAX_SHARE);
+  const half = Math.min(ARROW_HALF, size / 2);
   const ux = dx / len;
   const uy = dy / len;
-  const baseX = tip.x - ux * ARROW_LEN;
-  const baseY = tip.y - uy * ARROW_LEN;
+  const baseX = tip.x - ux * size;
+  const baseY = tip.y - uy * size;
   const px = -uy;
   const py = ux;
 
   return (
     `M${tip.x},${tip.y} ` +
-    `L${baseX + px * ARROW_HALF},${baseY + py * ARROW_HALF} ` +
-    `L${baseX - px * ARROW_HALF},${baseY - py * ARROW_HALF} Z`
+    `L${baseX + px * half},${baseY + py * half} ` +
+    `L${baseX - px * half},${baseY - py * half} Z`
   );
 }
 
@@ -121,18 +134,18 @@ function renderRect(rect: Rect): string {
   if (rect.text) {
     const scale = rect.textScale ?? 1;
     const cell = scale * CELL;
-    const size = cell * GLYPH_RATIO;
     const lines = visibleTextLines(rect);
 
     for (let row = 0; row < lines.length; row++) {
-      const chars = Array.from(lines[row] ?? '');
-      for (let col = 0; col < chars.length; col++) {
-        const cx = rect.x * CELL + col * cell + cell / 2;
-        const cy = rect.y * CELL + row * cell + cell / 2;
+      const cy = rect.y * CELL + row * cell + cell / 2;
+      for (const glyph of placeLine(lines[row] ?? '')) {
+        const cx = rect.x * CELL + (glyph.x + glyph.w / 2) * cell;
+        const ratio = glyph.w >= 1 ? GLYPH_RATIO_WIDE : GLYPH_RATIO_NARROW;
+        const size = cell * ratio;
         parts.push(
           `<text x="${cx}" y="${cy}" font-family="${FONT}" font-size="${size}" ` +
             `fill="${INK}" text-anchor="middle" dominant-baseline="central">${esc(
-              chars[col] ?? ''
+              glyph.ch
             )}</text>`
         );
       }

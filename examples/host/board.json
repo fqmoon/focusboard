@@ -1,65 +1,85 @@
 {
-  "tier": "medium",
+  "tier": "large",
   "elements": [
     {
       "id": "title",
       "type": "rect",
       "x": 1,
-      "y": 1,
-      "w": 34,
+      "y": 0,
+      "w": 46,
       "h": 2,
-      "text": "focusboard 0.1.0",
+      "text": "focusboard 0.1.0 架构",
       "textScale": 2,
       "border": "none"
     },
     {
       "id": "agent",
       "type": "rect",
-      "x": 2,
-      "y": 14,
+      "x": 1,
+      "y": 4,
       "w": 14,
       "h": 5,
-      "text": "agent\n维护元素数组\n跨轮传入"
+      "text": "agent\n持有整块板\n每轮全量重发\n无 boardId\n无连接状态"
     },
     {
       "id": "core",
       "type": "rect",
-      "x": 2,
-      "y": 5,
-      "w": 14,
-      "h": 6,
-      "text": "core\n规则库\n元素模型\n几何查询\nlint / 档位"
+      "x": 17,
+      "y": 10,
+      "w": 15,
+      "h": 9,
+      "text": "core\nschema：唯一契约\n  types 由它推导\nvalidate (Ajv)\nlint：errors 拒画\n  warnings 只警告\nquery · text\ntier 是页参数\n交付：纯函数"
     },
     {
       "id": "svg",
       "type": "rect",
-      "x": 20,
-      "y": 5,
-      "w": 14,
+      "x": 34,
+      "y": 10,
+      "w": 13,
+      "h": 9,
+      "text": "svg-render\ntoSVG(board)\n元素+档位\n→ SVG 字符串\n一格 = 100u\n线裁到边框\n字按字格排\n不碰 DOM\n无重排重绘"
+    },
+    {
+      "id": "scope",
+      "type": "rect",
+      "x": 26,
+      "y": 3,
+      "w": 20,
       "h": 6,
-      "text": "svg-render\n元素 + 档位\n→ SVG 字符串\n不碰 DOM"
+      "text": "0.1.0 不含\n服务 / HTTP / SSE\n持久化 · boardId\n套索 (0.2.0)\n整板 theme (0.3.0)"
     },
     {
       "id": "host",
       "type": "rect",
-      "x": 20,
-      "y": 14,
+      "x": 34,
+      "y": 22,
+      "w": 13,
+      "h": 5,
+      "text": "调用方页面\n自己定传输\n嵌 SVG\n全在 SDK 外"
+    },
+    {
+      "id": "human",
+      "type": "rect",
+      "x": 1,
+      "y": 22,
       "w": 14,
       "h": 5,
-      "text": "调用方\n传输 / 页面\n不在 SDK"
+      "text": "人\n看板\n只说两件事\n不要哪个\n没看懂哪处"
     },
     {
       "id": "note",
       "type": "rect",
-      "x": 2,
-      "y": 21,
-      "w": 32,
+      "x": 1,
+      "y": 28,
+      "w": 46,
       "h": 2,
-      "text": "几何是唯一真相；渲染器不做决策。",
+      "text": "依赖单向：svg-render → core。规则在 core，renderer 只画。\n唯一接口是板数据 JSON { tier, elements }；无服务、无持久化。",
       "border": "none"
     },
     { "id": "e1", "type": "line", "a": "agent", "b": "core", "arrow": "b" },
     { "id": "e2", "type": "line", "a": "core", "b": "svg", "arrow": "b" },
-    { "id": "e3", "type": "line", "a": "svg", "b": "host", "arrow": "b", "style": "dashed" }
+    { "id": "e3", "type": "line", "a": "svg", "b": "host", "arrow": "b" },
+    { "id": "e4", "type": "line", "a": "host", "b": "human", "arrow": "b" },
+    { "id": "e5", "type": "line", "a": "human", "b": "agent", "arrow": "b", "style": "dashed" }
   ]
 }
