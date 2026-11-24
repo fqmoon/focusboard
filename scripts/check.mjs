@@ -1,26 +1,74 @@
 #!/usr/bin/env node
 /**
- * Read-only text report for a board: how much of each rect the text actually
- * fills. Prints columns (a cell is two columns), flags soft wraps, overflow and
- * full-width glyphs that hang half a cell off the grid.
+ * Read-only inspector for a board. Two modes:
  *
- *   npm run check                 # examples/host/board.json
- *   npm run check -- path/to.json
+ *   npm run check [file]                 # human report: columns, wraps, overhang
+ *   npm run check [file] --free 17,10,15,9 --hit 24,12
+ *                                        # JSON answers for point/region queries
+ *
+ * Query flags take the board as input, exactly like a submission: the board is
+ * the thing being asked about, so there is no state to keep in sync. Repeat a
+ * flag to batch several queries into one call.
  */
 import { readFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 
-import { lint, measure } from '@focusboard/core';
+import { free, hit, lint, measure } from '@focusboard/core';
 
-const path = resolve(process.argv[2] ?? 'examples/host/board.json');
+const argv = process.argv.slice(2);
+
+const numbers = (value, count) => {
+  const parts = String(value ?? '').split(',').map(part => Number(part.trim()));
+  if (parts.length !== count || parts.some(part => !Number.isFinite(part))) {
+    throw new Error(`需要 ${count} 个数字，收到 "${value}"`);
+  }
+  return parts;
+};
+
+const regions = [];
+const points = [];
+let file = 'examples/host/board.json';
+
+for (let i = 0; i < argv.length; i++) {
+  const arg = argv[i];
+  if (arg === '--free') {
+    const [x, y, w, h] = numbers(argv[++i], 4);
+    regions.push({ x, y, w, h });
+  } else if (arg === '--hit') {
+    const [x, y] = numbers(argv[++i], 2);
+    points.push({ x, y });
+  } else if (arg.startsWith('--')) {
+    throw new Error(`未知参数 ${arg}`);
+  } else {
+    file = arg;
+  }
+}
+
+const path = resolve(file);
+
 const board = JSON.parse(await readFile(path, 'utf8'));
-
 const { errors, warnings } = lint(board);
+
+if (regions.length > 0 || points.length > 0) {
+  console.log(
+    JSON.stringify(
+      {
+        errors,
+        warnings,
+        free: regions.map(region => ({ ...region, cells: free(region, board.elements) })),
+        hit: points.map(point => ({ ...point, ids: hit(point.x, point.y, board.elements) }))
+      },
+      null,
+      2
+    )
+  );
+  process.exit(errors.length > 0 ? 1 : 0);
+}
+
 const report = measure(board);
 const shown = relative(process.cwd(), path);
 
-const page = `${board.tier}`;
-console.log(`${shown}  tier=${page}  ${report.rects.length} rects  ${report.lineCount} lines`);
+console.log(`${shown}  tier=${board.tier}  ${report.rects.length} rects  ${report.lineCount} lines`);
 console.log(`errors ${errors.length}  warnings ${warnings.length}`);
 
 for (const issue of errors) console.log(`  error ${issue.code}  ${issue.message}`);
