@@ -1,6 +1,6 @@
 {
   "name": "@focusboard/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "bin": {
     "focusboard": "./dist/src/bin.js"
@@ -24,5 +24,15 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "typescript": "^5.9.0"
+  },
+  "author": "fqmoon (https://github.com/fqmoon)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fqmoon/focusboard.git"
+  },
+  "homepage": "https://github.com/fqmoon/focusboard#readme",
+  "bugs": {
+    "url": "https://github.com/fqmoon/focusboard/issues"
   }
 }

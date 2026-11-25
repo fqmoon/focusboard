@@ -63,3 +63,7 @@ node focusboard.mjs submit board.json --out out --page  # 3. 交付：写 out/bo
 - 不要在一格里写字超过容量再指望裁切 —— `check` 会报溢出，改了再交。
 - 不要把长段落塞进一个框 —— 拆成几个短框，或者改用话讲。
 - 不要画没有内容的框（比如只有一个"其他"）—— 想不清就先别画。
+
+---
+
+仓库 <https://github.com/fqmoon/focusboard> ｜ MIT © 2026 fqmoon ｜ <!-- version -->

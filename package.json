@@ -1,6 +1,6 @@
 {
   "name": "focusboard",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -15,7 +15,8 @@
     "board": "node packages/cli/dist/src/bin.js",
     "check": "npm run build && node packages/cli/dist/src/bin.js check examples/host/board.json --text",
     "example": "npm run build && node packages/cli/dist/src/bin.js submit examples/host/board.json --out examples/host/out --page",
-    "build:skill": "node scripts/build-skill.mjs"
+    "build:skill": "node scripts/build-skill.mjs",
+    "overview": "npm run build && node packages/cli/dist/src/bin.js submit docs/overview/board.json --out docs/overview --text"
   },
   "dependencies": {
     "@focusboard/core": "*",
@@ -25,5 +26,15 @@
     "@types/node": "^24.0.0",
     "esbuild": "^0.28.2",
     "typescript": "^5.9.0"
+  },
+  "author": "fqmoon (https://github.com/fqmoon)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fqmoon/focusboard.git"
+  },
+  "homepage": "https://github.com/fqmoon/focusboard#readme",
+  "bugs": {
+    "url": "https://github.com/fqmoon/focusboard/issues"
   }
 }

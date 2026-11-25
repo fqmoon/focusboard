@@ -9,7 +9,7 @@ core 和 svg-render 已经落成：
 - **测试**：core 覆盖校验、查询、lint、测量、文字列宽；svg-render 覆盖输出结构、顺序、文字、线。共 47 个。
 - **示例**：`examples/host` 能把 `board.json` 写成 SVG 和一份静态页面；提交一次就回执一次 lint（stdout 是 JSON）。
 - **自检**：`measure()` 与 `focusboard check` 报每个框的列宽、折行、行溢出、汉字偏半格；`lint` 报形状与几何。
-- **产物**：`npm run build:skill` 输出 `dist/skill/`（`SKILL.md` + 单文件 `focusboard.mjs` + 模板），随 Release 发布 —— 使用者拿到的是一个 skill，不是一个仓库。
+- **产物**：`npm run build:skill` 输出 `dist/focusboard-skill/`（`README.md` + `SKILL.md` + 单文件 `focusboard.mjs` + 模板 + `LICENSE`）并打成 `dist/focusboard-skill-<版本>.tar.gz`，随 Release 发布 —— 使用者拿到的是一个 skill，不是一个仓库。
 
 0.1.0 已打 tag（`v0.1.0`）。工具契约已落地：提交整块板 → 返回 `{ errors, warnings, rendered }`，传输仍由宿主决定。
 
@@ -50,7 +50,7 @@ core 已经拆出；工具契约与宿主不在 SDK 内。
 
 ## 0.2.0 —— CLI：查与交
 
-**状态**：完成，tag `v0.2.0`；`v0.2.1` 加 skill 包产物。`packages/cli` 12 个测试，全仓 65 个。**不发布**：没有公开计划，bin 只在仓库内可用（`npm run board` 或 `node_modules/.bin/focusboard`）。
+**状态**：完成，tag `v0.2.0`；`v0.2.1` 加 skill 包产物（仓库公开，产物带人读 README、仓库链接、MIT 版权与作者，tarball 由构建脚本一次出）。`packages/cli` 12 个测试，全仓 65 个。**包不发布**：`@focusboard/*` 不进 registry，bin 只在仓库内可用（`npm run board` 或 `node_modules/.bin/focusboard`）；对外只有 Release 里的 skill 包。
 
 **目标**：把"只能内部用"的那条路变成正经命令，让 agent 和人问的是同一份东西。
 
