@@ -6,7 +6,7 @@ core 和 svg-render 已经落成：
 
 - **core**：唯一的 board schema（Ajv 校验）、几何查询、lint（errors / warnings）、文字列宽（一格两列）与档位。
 - **svg-render**：`toSVG(board)`，纯字符串，不碰 DOM。
-- **测试**：core 覆盖校验、查询、lint、字格；svg-render 覆盖输出结构、顺序、文字、线。
+- **测试**：core 覆盖校验、查询、lint、测量、文字列宽；svg-render 覆盖输出结构、顺序、文字、线。共 47 个。
 - **示例**：`examples/host` 能把 `board.json` 写成 SVG 和一份静态页面；提交一次就回执一次 lint（stdout 是 JSON）。
 - **自检**：`measure()` 与 `npm run check` 报每个框的列宽、折行、行溢出、汉字偏半格；`lint` 报形状与几何。
 
