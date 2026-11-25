@@ -1,4 +1,4 @@
-import { contains, isRect, overlaps, rectOf } from './query.js';
+import { borderExit, centerOf, contains, crossesInterior, inside, isRect, overlaps, rectOf } from './query.js';
 import type { Element, Line, Rect } from './schema.js';
 import { TIERS } from './tier.js';
 import { textGrid, wrapText } from './text.js';
@@ -82,6 +82,35 @@ export function lint(input: unknown): LintResult {
     }
     if (!b || b.type !== 'rect') {
       errors.push(issue('dangling_line', [line.id], `${line.id} 的 b 指向不存在的 rect ${line.b}`));
+    }
+  }
+
+  for (const element of elements) {
+    if (element.type !== 'line') continue;
+    const line: Line = element;
+    const from = byId.get(line.a);
+    const to = byId.get(line.b);
+    if (!from || from.type !== 'rect' || !to || to.type !== 'rect') continue;
+
+    const regionFrom = rectOf(from);
+    const regionTo = rectOf(to);
+    const start = borderExit(regionFrom, centerOf(regionTo));
+    const end = borderExit(regionTo, centerOf(regionFrom));
+
+    for (const rect of rects) {
+      if (rect.id === from.id || rect.id === to.id) continue;
+      const region = rectOf(rect);
+      // A line living entirely inside a box is a normal enclosing box, not a
+      // line cutting through something.
+      if (inside(start, region) && inside(end, region)) continue;
+      if (!crossesInterior(start, end, region)) continue;
+      warnings.push(
+        issue(
+          'line_crosses_rect',
+          [line.id, rect.id],
+          `${line.id}（${from.id}→${to.id}）穿过 ${rect.id}`
+        )
+      );
     }
   }
 

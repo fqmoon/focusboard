@@ -10,6 +10,7 @@ export type IssueCode =
   | 'dangling_line'
   | 'out_of_bounds'
   | 'partial_overlap'
+  | 'line_crosses_rect'
   | 'text_overflow'
   | 'text_scale_misaligned';
 

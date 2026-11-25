@@ -89,3 +89,52 @@ test('does not warn about style or layout choices', () => {
   assert.deepEqual(result.errors, []);
   assert.deepEqual(result.warnings, []);
 });
+
+test('reports a line that cuts through a third rect', () => {
+  const result = lint({
+    tier: 'large',
+    elements: [
+      rect('a', 1, 1, 4, 4),
+      rect('mid', 8, 1, 4, 4),
+      rect('b', 15, 1, 4, 4),
+      { id: 'e', type: 'line', a: 'a', b: 'b' }
+    ]
+  });
+  const crossing = result.warnings.filter(warning => warning.code === 'line_crosses_rect');
+  assert.equal(crossing.length, 1);
+  assert.deepEqual(crossing[0]?.ids, ['e', 'mid']);
+});
+
+test('a line along a rect border is not a crossing', () => {
+  const result = lint({
+    tier: 'large',
+    elements: [
+      rect('a', 1, 1, 4, 4),
+      rect('below', 1, 5, 4, 4),
+      rect('b', 15, 1, 4, 4),
+      { id: 'e', type: 'line', a: 'a', b: 'b' }
+    ]
+  });
+  assert.equal(result.warnings.filter(warning => warning.code === 'line_crosses_rect').length, 0);
+});
+
+test('a line inside an enclosing rect is not a crossing', () => {
+  const result = lint({
+    tier: 'large',
+    elements: [
+      rect('frame', 0, 0, 20, 10),
+      rect('a', 2, 4, 2, 2),
+      rect('b', 12, 4, 2, 2),
+      { id: 'e', type: 'line', a: 'a', b: 'b' }
+    ]
+  });
+  assert.equal(result.warnings.filter(warning => warning.code === 'line_crosses_rect').length, 0);
+});
+
+test('the two rects a line connects are never reported', () => {
+  const result = lint({
+    tier: 'small',
+    elements: [rect('a', 0, 0, 3, 3), rect('b', 6, 0, 3, 3), { id: 'e', type: 'line', a: 'a', b: 'b' }]
+  });
+  assert.equal(result.warnings.filter(warning => warning.code === 'line_crosses_rect').length, 0);
+});

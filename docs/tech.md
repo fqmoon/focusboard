@@ -212,6 +212,8 @@ CSS 度量也可以用（容器查询 `@container`），但选档的结果最终
 - 线的两端**裁到各自的边框上**，箭头尖正落在框边，不进入框内；
 - 裁剪要对**内缩后**的矩形做 —— 否则箭头会悬在那道缝里，看着没接上。
 
+中段是透明的：线只认自己的两个端点，中间压着谁它不知道。这件事不在渲染器里补，而是由 `lint` 的 `line_crosses_rect` 报出来（只算穿过内部，擦边不算）。
+
 ```
    ┌────┐              ┌────┐
    │ A  │─────────────▶│ B  │
@@ -326,7 +328,13 @@ lint 分 errors 和 warnings。errors 是“这份输入不成立”，warnings 
 
 **errors**：`missing_field`、`invalid_type`、`unknown_type`、`invalid_enum`、`not_integer`、`out_of_range`、`unknown_field`、`duplicate_id`、`dangling_line`。
 
-**warnings**：`out_of_bounds`、`partial_overlap`、`text_overflow`、`text_scale_misaligned`。完全包含不算 overlap。
+**warnings**：`out_of_bounds`、`partial_overlap`、`line_crosses_rect`、`text_overflow`、`text_scale_misaligned`。完全包含不算 overlap。
+
+`line_crosses_rect` 只在**线真的穿过某个框的内部**时报（`ids` 是 `[线, 框]`）。三种情况不算：
+
+- **擦边**：线沿着框的边或角走，与内部分享零面积 —— 判定前把框缩一点，所以贴边走是干净的。
+- **两端框**：线连的 `a`、`b` 自己永远不报。
+- **被包住**：整条线都在某个框里面（外面套了一个大框），那是正常的包围框，不是穿过。
 
 - errors 非空：输入不成立，调用方不应渲染。
 - warnings：照画；越界裁到页边，溢出裁切，部分重叠按数组顺序遮挡，字格不整除按 floor 取整。
@@ -334,7 +342,7 @@ lint 分 errors 和 warnings。errors 是“这份输入不成立”，warnings 
 
 lint 不判断样式和布局：对齐、留白、字号合不合适、两个框该不该挨着，都不报。这些用 `bounds` / `overlaps` / `contains` / `hit` / `free` 自己查，再由 agent 决定。
 
-**还有一条边界要写死：线穿过 rect、线与线交叉，lint 也不报。** 线只连两个中心、两端裁到边框，中段对别的元素是透明的 —— 一条斜线从三个框中间穿过，几何上完全合法。这类问题只有看图才能发现，所以**"lint 0 warning"不等于"图看着对"**。要变成检查项，得先定"擦边算不算穿过"的口径（半格？内缩后的边框？），那是另一件事。
+**还剩一条边界：线与线交叉不报。** 检测可以写（就是线段求交），但它只会报出"两条线交于一点"，没有任何判定标准能说清该不该 —— 那属于锚点分散/路由的事，需要新模型。所以**"lint 0 warning"仍然不等于"图看着对"**：线穿框现在会报，线线交叉、线贴着文字擦过、两个框贴太近看着难受，都只能看图。
 
 ### 接口简单到不用训练
 

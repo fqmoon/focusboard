@@ -7,6 +7,82 @@ export interface Region {
   h: number;
 }
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export function centerOf(region: Region): Point {
+  return { x: region.x + region.w / 2, y: region.y + region.h / 2 };
+}
+
+/**
+ * Point where a ray from the region's centre toward `toward` leaves the
+ * border. Lines are drawn between these points, so the middle of a line can
+ * still land on top of a third rect; see `crossesInterior`.
+ */
+export function borderExit(region: Region, toward: Point): Point {
+  const from = centerOf(region);
+  const dx = toward.x - from.x;
+  const dy = toward.y - from.y;
+  if (dx === 0 && dy === 0) return from;
+
+  let t = Number.POSITIVE_INFINITY;
+  if (dx > 0) t = Math.min(t, (region.x + region.w - from.x) / dx);
+  if (dx < 0) t = Math.min(t, (region.x - from.x) / dx);
+  if (dy > 0) t = Math.min(t, (region.y + region.h - from.y) / dy);
+  if (dy < 0) t = Math.min(t, (region.y - from.y) / dy);
+
+  if (!Number.isFinite(t) || t <= 0) return from;
+  return { x: from.x + dx * t, y: from.y + dy * t };
+}
+
+export function inside(point: Point, region: Region): boolean {
+  return (
+    point.x >= region.x &&
+    point.x <= region.x + region.w &&
+    point.y >= region.y &&
+    point.y <= region.y + region.h
+  );
+}
+
+/**
+ * Does the segment pass through the *interior* of `region`? Grazing an edge or
+ * a corner is not a crossing: the rect is shrunk by `eps` first, so a line that
+ * runs exactly along a border stays clean.
+ */
+export function crossesInterior(from: Point, to: Point, region: Region, eps = 1e-9): boolean {
+  const x1 = region.x + eps;
+  const y1 = region.y + eps;
+  const x2 = region.x + region.w - eps;
+  const y2 = region.y + region.h - eps;
+  if (x2 <= x1 || y2 <= y1) return false;
+
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  let t0 = 0;
+  let t1 = 1;
+
+  const clip = (p: number, q: number): boolean => {
+    if (p === 0) return q >= 0;
+    const r = q / p;
+    if (p < 0) {
+      if (r > t1) return false;
+      if (r > t0) t0 = r;
+    } else {
+      if (r < t0) return false;
+      if (r < t1) t1 = r;
+    }
+    return true;
+  };
+
+  if (!clip(-dx, from.x - x1)) return false;
+  if (!clip(dx, x2 - from.x)) return false;
+  if (!clip(-dy, from.y - y1)) return false;
+  if (!clip(dy, y2 - from.y)) return false;
+  return t1 - t0 > 0;
+}
+
 export function isRect(element: Element): element is Rect {
   return element.type === 'rect';
 }

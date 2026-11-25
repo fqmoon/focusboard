@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { bounds, contains, free, hit, overlaps, type Element } from '../src/index.js';
+import {
+  borderExit,
+  bounds,
+  contains,
+  crossesInterior,
+  free,
+  hit,
+  overlaps,
+  type Element
+} from '../src/index.js';
 
 const elements: Element[] = [
   { id: 'a', type: 'rect', x: 0, y: 0, w: 4, h: 3 },
@@ -39,4 +48,18 @@ test('free counts uncovered cells once', () => {
 
 test('free clips the region', () => {
   assert.equal(free({ x: 2, y: 1, w: 2, h: 2 }, [elements[0]!]), 0);
+});
+
+test('crossesInterior ignores grazing and containment', () => {
+  const region = { x: 4, y: 4, w: 4, h: 4 };
+  assert.equal(crossesInterior({ x: 0, y: 6 }, { x: 10, y: 6 }, region), true);
+  assert.equal(crossesInterior({ x: 0, y: 4 }, { x: 10, y: 4 }, region), false);
+  assert.equal(crossesInterior({ x: 0, y: 8 }, { x: 10, y: 8 }, region), false);
+  assert.equal(crossesInterior({ x: 0, y: 0 }, { x: 3, y: 3 }, region), false);
+});
+
+test('borderExit lands on the border between two centres', () => {
+  const a = { x: 0, y: 0, w: 4, h: 4 };
+  const b = { x: 10, y: 0, w: 4, h: 4 };
+  assert.deepEqual(borderExit(a, { x: 12, y: 2 }), { x: 4, y: 2 });
 });
