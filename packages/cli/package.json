@@ -1,0 +1,28 @@
+{
+  "name": "@focusboard/cli",
+  "version": "0.2.0",
+  "type": "module",
+  "bin": {
+    "focusboard": "./dist/src/bin.js"
+  },
+  "main": "./dist/src/cli.js",
+  "types": "./dist/src/cli.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/cli.d.ts",
+      "import": "./dist/src/cli.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test dist/test/*.test.js"
+  },
+  "dependencies": {
+    "@focusboard/core": "*",
+    "@focusboard/svg-render": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

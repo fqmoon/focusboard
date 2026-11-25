@@ -8,11 +8,11 @@ core 和 svg-render 已经落成：
 - **svg-render**：`toSVG(board)`，纯字符串，不碰 DOM。
 - **测试**：core 覆盖校验、查询、lint、测量、文字列宽；svg-render 覆盖输出结构、顺序、文字、线。共 47 个。
 - **示例**：`examples/host` 能把 `board.json` 写成 SVG 和一份静态页面；提交一次就回执一次 lint（stdout 是 JSON）。
-- **自检**：`measure()` 与 `npm run check` 报每个框的列宽、折行、行溢出、汉字偏半格；`lint` 报形状与几何。
+- **自检**：`measure()` 与 `focusboard check` 报每个框的列宽、折行、行溢出、汉字偏半格；`lint` 报形状与几何。
 
 0.1.0 已打 tag（`v0.1.0`）。工具契约已落地：提交整块板 → 返回 `{ errors, warnings, rendered }`，传输仍由宿主决定。
 
-还没有：可发布的 CLI、套索、样式、跨板组合。
+还没有：套索、样式、跨板组合。CLI 已落地（`@focusboard/cli`），但**不发布**，只在本仓库内可用。
 
 ## 0.1.0 —— agent 能完整调用并渲染
 
@@ -38,7 +38,7 @@ core 和 svg-render 已经落成：
 
 | 验收 | 结果 | 证据 |
 |---|---|---|
-| 元素 → SVG → 页面，不改代码 | 过 | `examples/host/build.mjs` |
+| 元素 → SVG → 页面，不改代码 | 过 | `focusboard submit`（原 `examples/host/build.mjs`） |
 | lint 结果回传给 agent | 过 | 回执 JSON；画板时按 warning 改到 0 |
 | `free(region)` 能问 | 过 | `check --free`；但实际画图时更常用 `measure` |
 | 只有 agent 写、人只说话 | 过 | 本次两版图 |
@@ -47,22 +47,25 @@ core 和 svg-render 已经落成：
 
 core 已经拆出；工具契约与宿主不在 SDK 内。
 
-## 0.2.0 —— 可发布的 CLI
+## 0.2.0 —— CLI：查与交
 
-**目标**：出了这个仓库也能用。
+**状态**：已实现（`packages/cli`，12 个测试）。**不发布**：没有公开计划，bin 只在仓库内可用（`npm run board` 或 `node_modules/.bin/focusboard`）。
 
-现在 `check` / `example` 是仓库内脚手架：要 cwd 在仓库里、要先 `npm run build`、两个包也没发布。命令行是唯一还在被真实使用、却只能内部用的入口，所以先把它变成产品面。
+**目标**：把"只能内部用"的那条路变成正经命令，让 agent 和人问的是同一份东西。
 
-范围：
+两个动词，区别只在写不写盘：
 
-- **一个 bin 包**（如 `@focusboard/cli`），`bin: { focusboard }`，core / svg-render 仍不带任何 IO。
-- **两个子命令**：`focusboard check [file] [--free x,y,w,h] [--hit x,y]`、`focusboard submit [file] [--out dir]`；行为与现在的脚本一致。
-- **输出格式在这版冻结**：回执和查询结果都是 JSON，退出码 0 = 无 error、1 = 有 error、2 = 用法错误。冻结之后宿主的脚本才敢依赖它。
-- **发布**：两个库包 + CLI 包都能 `npm i` / `npx`；版本号对齐。
+- `focusboard check [file] [--text] [--free x,y,w,h] [--hit x,y]` —— 只读：文字列宽、点/区查询。
+- `focusboard submit [file] [--out dir] [--page] [--text]` —— 提交：lint 通过才写 `board.svg`，`--page` 再写页面；有 error 一个字节都不写。
 
-不做：常驻服务、监听模式、watch、HTTP —— 那是宿主的事。
+约定：
 
-验收：在任意空目录里 `npx @focusboard/cli check board.json` 能跑通；`submit` 生成 SVG 与页面；退出码与 JSON 形状和现在一致。
+- **默认 JSON，`--text` 人读**；日志走 stderr，stdout 只有结果。
+- 退出码 `0` / `1`（lint error）/ `2`（用法错），这版冻结。
+- 元素 schema 仍然只有 core 一份，CLI 不定义形状。
+- core / svg-render 保持零 IO：`fs`、argv、退出码全在 CLI。
+
+不做：发布到 registry、常驻服务、watch、HTTP、增量更新。
 
 ## 0.3.0 —— 人能在板上圈选
 
