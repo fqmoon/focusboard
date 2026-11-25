@@ -16,9 +16,32 @@ npm install
 npm test          # 编译并跑 core / svg-render / cli 的测试
 npm run example   # 提交示例板 → examples/host/out/{board.svg,index.html}
 npm run check     # 只读报告（人读）
+npm run build:skill  # 产物：dist/skill/{SKILL.md,focusboard.mjs,board.example.json}
 ```
 
 打开 `examples/host/out/index.html` 可以看到示例板（`board.json` 是运行流程图，`arch.json` 是架构图）。
+
+## 产物：一个 skill 包
+
+这套东西对使用者来说**表现为一个 skill**：agent 读 `SKILL.md` 就知道怎么画、怎么自查、什么时候该开新板；它需要的唯一工具是一个 148 KB 的单文件 CLI。
+
+```bash
+npm run build:skill
+dist/skill/
+  SKILL.md            # 给 agent 的说明：三步、写板规则、判断
+  focusboard.mjs      # 单文件、零依赖、node 20+，check / submit 都在里面
+  board.example.json  # 最小板，复制开始改
+```
+
+产物是自包含的：不依赖 `node_modules`、不依赖本仓库、不需要发布到 npm。整个目录丢给别人即可 ——
+
+```bash
+cp board.example.json board.json
+./focusboard.mjs check board.json --text     # 画之前自查
+./focusboard.mjs submit board.json --out out --page
+```
+
+仓库里的 `skill/` 是源（改说明改这里），`dist/` 是产物（不提交）。产物随 GitHub Release 发布，见 [Releases](https://github.com/fqmoon/focusboard/releases)。
 
 ## 命令：查与交
 

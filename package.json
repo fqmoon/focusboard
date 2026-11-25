@@ -1,6 +1,6 @@
 {
   "name": "focusboard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -14,7 +14,8 @@
     "test:cli": "node --test packages/cli/dist/test/*.test.js",
     "board": "node packages/cli/dist/src/bin.js",
     "check": "npm run build && node packages/cli/dist/src/bin.js check examples/host/board.json --text",
-    "example": "npm run build && node packages/cli/dist/src/bin.js submit examples/host/board.json --out examples/host/out --page"
+    "example": "npm run build && node packages/cli/dist/src/bin.js submit examples/host/board.json --out examples/host/out --page",
+    "build:skill": "node scripts/build-skill.mjs"
   },
   "dependencies": {
     "@focusboard/core": "*",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
     "typescript": "^5.9.0"
   }
 }
