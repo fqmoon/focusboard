@@ -1,0 +1,108 @@
+{
+  "tier": "large",
+  "elements": [
+    {
+      "id": "title",
+      "type": "rect",
+      "x": 1,
+      "y": 0,
+      "w": 34,
+      "h": 2,
+      "text": "focusboard架构 v0.2",
+      "textScale": 2,
+      "border": "none"
+    },
+    {
+      "id": "cli",
+      "type": "rect",
+      "x": 1,
+      "y": 3,
+      "w": 20,
+      "h": 6,
+      "text": "cli: bin focusboard\ncheck 只读 / submit 写盘\nargv · stdin · 退出码\n唯一碰 fs 的包\nerrors 非空 → 一个字节都不写"
+    },
+    {
+      "id": "examples",
+      "type": "rect",
+      "x": 24,
+      "y": 3,
+      "w": 22,
+      "h": 4,
+      "text": "examples/host\nboard.json（样例板）\n输入：整块板 JSON"
+    },
+    {
+      "id": "out",
+      "type": "rect",
+      "x": 24,
+      "y": 9,
+      "w": 22,
+      "h": 4,
+      "text": "out/\nboard.svg\nindex.html（--page）"
+    },
+    {
+      "id": "svg",
+      "type": "rect",
+      "x": 1,
+      "y": 11,
+      "w": 14,
+      "h": 6,
+      "text": "svg-render\ntoSVG(board)\n元素+档位 → SVG\n不碰 DOM\n只画，不做决策"
+    },
+    {
+      "id": "core",
+      "type": "rect",
+      "x": 1,
+      "y": 19,
+      "w": 20,
+      "h": 8,
+      "text": "core\nschema · validate (Ajv)\nlint: errors / warnings\nquery · text · tier\nmeasure 列宽报告\n规则与判定都在这里\n零 IO，纯函数"
+    },
+    {
+      "id": "note",
+      "type": "rect",
+      "x": 1,
+      "y": 28,
+      "w": 46,
+      "h": 2,
+      "border": "none",
+      "text": "依赖单向：cli → svg-render → core，cli 也直接用 core。\ncore 与 svg-render 零 IO；lint 只查五类，线穿框不查 —— 得看图。"
+    },
+    {
+      "id": "e1",
+      "type": "line",
+      "a": "examples",
+      "b": "cli",
+      "arrow": "b"
+    },
+    {
+      "id": "e2",
+      "type": "line",
+      "a": "cli",
+      "b": "out",
+      "arrow": "b"
+    },
+    {
+      "id": "e3",
+      "type": "line",
+      "a": "cli",
+      "b": "svg",
+      "arrow": "b"
+    },
+    {
+      "id": "e4",
+      "type": "line",
+      "a": "svg",
+      "b": "core",
+      "arrow": "b"
+    },
+    {
+      "id": "rules",
+      "type": "rect",
+      "x": 24,
+      "y": 14,
+      "w": 22,
+      "h": 7,
+      "text": "契约（0.2.0 冻结）\n默认 JSON，--text 人读\n退出码 0 / 1 / 2\nstdout 只有结果\nboard 与 tier 是唯一输入\nlint 五类，别的不查"
+    }
+  ]
+}

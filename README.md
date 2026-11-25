@@ -18,7 +18,7 @@ npm run example   # 提交示例板 → examples/host/out/{board.svg,index.html}
 npm run check     # 只读报告（人读）
 ```
 
-打开 `examples/host/out/index.html` 可以看到示例板。
+打开 `examples/host/out/index.html` 可以看到示例板（`board.json` 是运行流程图，`arch.json` 是架构图）。
 
 ## 命令：查与交
 
