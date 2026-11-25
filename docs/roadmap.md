@@ -49,7 +49,7 @@ core 已经拆出；工具契约与宿主不在 SDK 内。
 
 ## 0.2.0 —— CLI：查与交
 
-**状态**：已实现（`packages/cli`，12 个测试）。**不发布**：没有公开计划，bin 只在仓库内可用（`npm run board` 或 `node_modules/.bin/focusboard`）。
+**状态**：完成，tag `v0.2.0`。`packages/cli` 12 个测试，全仓 65 个。**不发布**：没有公开计划，bin 只在仓库内可用（`npm run board` 或 `node_modules/.bin/focusboard`）。
 
 **目标**：把"只能内部用"的那条路变成正经命令，让 agent 和人问的是同一份东西。
 
