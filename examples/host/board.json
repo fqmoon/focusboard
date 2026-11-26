@@ -8,129 +8,31 @@
       "y": 0,
       "w": 40,
       "h": 2,
-      "text": "focusboard 运行流程",
+      "text": "focusboard：运行流程",
       "textScale": 2,
       "border": "none"
     },
+    { "id": "agent", "type": "rect", "x": 1, "y": 3, "w": 14, "h": 2, "text": "① agent" },
+    { "id": "json", "type": "rect", "x": 17, "y": 3, "w": 13, "h": 2, "text": "② board.json", "border": "dashed" },
+    { "id": "lint", "type": "rect", "x": 32, "y": 3, "w": 15, "h": 2, "text": "③ lint" },
+    { "id": "tosvg", "type": "rect", "x": 17, "y": 8, "w": 13, "h": 2, "text": "④ toSVG" },
+    { "id": "reject", "type": "rect", "x": 32, "y": 13, "w": 15, "h": 2, "text": "× errors" },
+    { "id": "host", "type": "rect", "x": 17, "y": 13, "w": 13, "h": 2, "text": "⑤ 宿主页面" },
+    { "id": "human", "type": "rect", "x": 1, "y": 13, "w": 14, "h": 2, "text": "⑥ 人" },
+    { "id": "dev", "type": "rect", "x": 1, "y": 16, "w": 12, "h": 1, "text": "开发回路", "border": "none" },
+    { "id": "build", "type": "rect", "x": 1, "y": 17, "w": 10, "h": 2, "text": "tsc -p" },
+    { "id": "test", "type": "rect", "x": 13, "y": 17, "w": 11, "h": 2, "text": "node --test" },
+    { "id": "example", "type": "rect", "x": 26, "y": 17, "w": 14, "h": 2, "text": "npm run example" },
+    { "id": "shot", "type": "rect", "x": 42, "y": 17, "w": 5, "h": 2, "text": "截图" },
     {
-      "id": "agent",
+      "id": "legend",
       "type": "rect",
       "x": 1,
-      "y": 3,
-      "w": 14,
-      "h": 5,
-      "text": "agent\n产出 tier+elements\n每轮全量重发"
-    },
-    {
-      "id": "json",
-      "type": "rect",
-      "x": 17,
-      "y": 3,
-      "w": 14,
-      "h": 5,
-      "text": "board.json\n{ tier,\n  elements }\n纯数据，无句柄",
-      "border": "dashed"
-    },
-    {
-      "id": "lint",
-      "type": "rect",
-      "x": 33,
-      "y": 3,
-      "w": 15,
-      "h": 5,
-      "text": "lint(board)\n1 validate/Ajv\n2 几何检查\n3 字数溢出"
-    },
-    {
-      "id": "tosvg",
-      "type": "rect",
-      "x": 17,
-      "y": 10,
-      "w": 14,
-      "h": 5,
-      "text": "toSVG(board)\nwarnings 照画\n元素、档位 → SVG"
-    },
-    {
-      "id": "reject",
-      "type": "rect",
-      "x": 33,
-      "y": 17,
-      "w": 15,
-      "h": 4,
-      "text": "errors → 不渲染\n调用方自己报错"
-    },
-    {
-      "id": "host",
-      "type": "rect",
-      "x": 17,
-      "y": 17,
-      "w": 14,
-      "h": 5,
-      "text": "宿主页面\n自己定传输\n嵌进 DOM"
-    },
-    {
-      "id": "human",
-      "type": "rect",
-      "x": 1,
-      "y": 17,
-      "w": 14,
-      "h": 5,
-      "text": "人\n只看图\n说两条：\n不要哪个\n没看懂哪处"
-    },
-    {
-      "id": "dev",
-      "type": "rect",
-      "x": 1,
-      "y": 23,
-      "w": 12,
-      "h": 1,
-      "text": "开发回路",
-      "border": "none"
-    },
-    {
-      "id": "build",
-      "type": "rect",
-      "x": 1,
-      "y": 25,
-      "w": 10,
-      "h": 4,
-      "text": "tsc -p\nESM + d.ts"
-    },
-    {
-      "id": "test",
-      "type": "rect",
-      "x": 13,
-      "y": 25,
-      "w": 11,
-      "h": 4,
-      "text": "node --test\n42 个用例"
-    },
-    {
-      "id": "example",
-      "type": "rect",
-      "x": 26,
-      "y": 25,
-      "w": 13,
-      "h": 4,
-      "text": "npm run example\n→ out/*.svg"
-    },
-    {
-      "id": "shot",
-      "type": "rect",
-      "x": 41,
-      "y": 25,
-      "w": 6,
-      "h": 4,
-      "text": "截图\n回看"
-    },
-    {
-      "id": "note",
-      "type": "rect",
-      "x": 1,
-      "y": 29,
+      "y": 21,
       "w": 46,
-      "h": 1,
-      "text": "同样的 board + tier 永远出同样的 SVG；样式好坏不进 lint，靠人这一回合。",
-      "border": "none"
+      "h": 8,
+      "border": "none",
+      "text": "① agent 一轮产出档位和元素，每轮全量重发\n② board.json  纯数据，没有句柄\n③ lint  先校验再查几何，最后数字数\n④ toSVG 元素和档位变字符串，照画不拦\n⑤ 宿主页面  自己定传输，把图嵌进页面\n⑥ 人  只看图，说两条：不要哪个、没看懂哪处\n开发回路  编译、测试、出图、截图回看，同样输入永远同样输出"
     },
     { "id": "e1", "type": "line", "a": "agent", "b": "json", "arrow": "b" },
     { "id": "e2", "type": "line", "a": "json", "b": "lint", "arrow": "b" },

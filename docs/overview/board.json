@@ -12,112 +12,27 @@
       "textScale": 2,
       "border": "none"
     },
+    { "id": "human", "type": "rect", "x": 2, "y": 3, "w": 9, "h": 3, "text": "① 人" },
+    { "id": "agent", "type": "rect", "x": 13, "y": 3, "w": 11, "h": 3, "text": "② agent" },
+    { "id": "board", "type": "rect", "x": 26, "y": 3, "w": 8, "h": 3, "text": "③ board" },
+    { "id": "cli", "type": "rect", "x": 26, "y": 8, "w": 8, "h": 3, "text": "④ cli" },
+    { "id": "svg", "type": "rect", "x": 13, "y": 8, "w": 11, "h": 3, "text": "⑤ svg" },
+    { "id": "browser", "type": "rect", "x": 2, "y": 8, "w": 9, "h": 3, "text": "⑥ 浏览器" },
     {
-      "id": "human",
+      "id": "legend",
       "type": "rect",
-      "x": 1,
-      "y": 3,
-      "w": 9,
-      "h": 5,
-      "text": "人\n只看图\n说：不要哪个、\n没看懂哪处"
-    },
-    {
-      "id": "agent",
-      "type": "rect",
-      "x": 12,
-      "y": 3,
-      "w": 11,
-      "h": 5,
-      "text": "agent\n读 SKILL.md\n只改要改的框\n每轮全量重画"
-    },
-    {
-      "id": "board",
-      "type": "rect",
-      "x": 25,
-      "y": 3,
-      "w": 10,
-      "h": 5,
-      "text": "board.json\n{ tier,\n  elements }\n几何是唯一真相"
-    },
-    {
-      "id": "browser",
-      "type": "rect",
-      "x": 1,
-      "y": 10,
-      "w": 9,
-      "h": 5,
-      "text": "浏览器\n宿主页面\n嵌进 DOM"
-    },
-    {
-      "id": "svg",
-      "type": "rect",
-      "x": 12,
-      "y": 10,
-      "w": 11,
-      "h": 5,
-      "text": "out/board.svg\n自包含一个文件\n可 diff · 可回放"
-    },
-    {
-      "id": "cli",
-      "type": "rect",
-      "x": 25,
-      "y": 10,
-      "w": 10,
-      "h": 5,
-      "text": "check / submit\n查：六类 lint\n交：不通过就\n一个字节不写"
-    },
-    {
-      "id": "note",
-      "type": "rect",
-      "x": 1,
-      "y": 17,
-      "w": 34,
-      "h": 5,
+      "x": 2,
+      "y": 13,
+      "w": 33,
+      "h": 10,
       "border": "none",
-      "text": "这张图就是 focusboard 画的：坐标落格，只有矩形和线。\n位置由生成方给：位置就是语义，所以没有自动布局。\nlint：只查形状 —— 越界、重叠、线穿框、文字溢出。\n它是一个文件，不依赖 npm —— 丢给别人就能用。\n改 docs/overview/board.json 再跑 submit"
+      "text": "① 人  只看图，只说「不要哪个」「没看懂哪处」\n② agent 按说明改框，只改要改的，全量重画\n③ board 一个纯数据文件，几何是唯一真相\n④ cli 先查 lint 再写盘，不过就一个字节不写\n⑤ svg 自包含一个文件，可回放\n⑥ 浏览器  宿主页面把图嵌进 DOM\n\n坐标落格，只有矩形和线；位置就是语义，没有自动布局。\n改 docs/overview/board.json 再跑 npm run overview"
     },
-    {
-      "id": "e1",
-      "type": "line",
-      "a": "human",
-      "b": "agent",
-      "arrow": "b"
-    },
-    {
-      "id": "e2",
-      "type": "line",
-      "a": "agent",
-      "b": "board",
-      "arrow": "b"
-    },
-    {
-      "id": "e3",
-      "type": "line",
-      "a": "board",
-      "b": "cli",
-      "arrow": "b"
-    },
-    {
-      "id": "e4",
-      "type": "line",
-      "a": "cli",
-      "b": "svg",
-      "arrow": "b"
-    },
-    {
-      "id": "e5",
-      "type": "line",
-      "a": "svg",
-      "b": "browser",
-      "arrow": "b"
-    },
-    {
-      "id": "e6",
-      "type": "line",
-      "a": "browser",
-      "b": "human",
-      "arrow": "b",
-      "style": "dashed"
-    }
+    { "id": "e1", "type": "line", "a": "human", "b": "agent", "arrow": "b" },
+    { "id": "e2", "type": "line", "a": "agent", "b": "board", "arrow": "b" },
+    { "id": "e3", "type": "line", "a": "board", "b": "cli", "arrow": "b" },
+    { "id": "e4", "type": "line", "a": "cli", "b": "svg", "arrow": "b" },
+    { "id": "e5", "type": "line", "a": "svg", "b": "browser", "arrow": "b" },
+    { "id": "e6", "type": "line", "a": "browser", "b": "human", "arrow": "b", "style": "dashed" }
   ]
 }
