@@ -15,20 +15,21 @@ export function checkText(result: CheckResult, source: string): string {
   if (report) {
     let rewrapped = 0;
     let hanging = 0;
+    let longest: { id: string; lines: number } | undefined;
 
     for (const rect of report.rects) {
       if (rect.lines.length === 0) continue;
 
-      lines.push('');
-      lines.push(`${rect.id}  ${rect.w}×${rect.h}  capacity ${rect.columns} 列 × ${rect.rows} 行`);
-
-      for (const [index, line] of rect.lines.entries()) {
-        const slack = rect.columns - line.columns;
-        const note = slack === 0 ? '满' : `余 ${slack}`;
-        lines.push(`  L${index + 1}  ${String(line.columns).padStart(3)} 列  ${note}   ${line.text}`);
+      if (!longest || rect.lines.length > longest.lines) {
+        longest = { id: rect.id, lines: rect.lines.length };
       }
 
-      lines.push(`  widest ${rect.widest}/${rect.columns} 列   ${rect.lines.length}/${rect.rows} 行`);
+      lines.push('');
+      lines.push(`${rect.id}  ${rect.w}×${rect.h}  ${rect.lines.length}/${rect.rows} 行  （一行 ${rect.columns} 列）`);
+
+      for (const [index, line] of rect.lines.entries()) {
+        lines.push(`  L${index + 1}  ${String(line.columns).padStart(3)} 列   ${line.text}`);
+      }
 
       if (rect.rewrapped) {
         rewrapped += 1;
@@ -47,7 +48,11 @@ export function checkText(result: CheckResult, source: string): string {
     }
 
     lines.push('');
-    lines.push(`summary: ${rewrapped} 处自动折行, ${hanging} 个框汉字偏半格`);
+    const filled = report.rects.filter(rect => rect.lines.length > 0).length;
+    const most = longest ? `，最长 ${longest.id} ${longest.lines} 行` : '';
+    lines.push(
+      `summary: ${filled} 个框有字，共 ${report.lineCount} 行${most}；${rewrapped} 处自动折行，${hanging} 个框汉字偏半格`
+    );
   }
 
   if (result.free.length > 0 || result.hit.length > 0) {

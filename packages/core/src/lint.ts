@@ -66,6 +66,17 @@ export function lint(input: unknown): LintResult {
           warnings.push(
             issue('text_overflow', [rect.id], `${rect.id} 文字溢出（${lines} 行 > ${grid.rows} 行）`)
           );
+        } else if (rect.border !== 'none' && lines >= 3) {
+          // A bordered box is a label, not a paragraph. Three lines of prose
+          // are a structure nobody drew: sub-boxes, or a legend at the bottom
+          // of the page. Borderless rects are where sentences live.
+          warnings.push(
+            issue(
+              'text_dense',
+              [rect.id],
+              `${rect.id} 写了 ${lines} 行字：有边框的框只放缩写或词语，细节拆成子框或移到页尾图例`
+            )
+          );
         }
       }
     }

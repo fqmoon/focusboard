@@ -12,6 +12,7 @@ export type IssueCode =
   | 'partial_overlap'
   | 'line_crosses_rect'
   | 'text_overflow'
+  | 'text_dense'
   | 'text_scale_misaligned';
 
 export interface Issue {

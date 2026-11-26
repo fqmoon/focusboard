@@ -3,11 +3,14 @@
   "elements": [
     { "id": "title", "type": "rect", "x": 1, "y": 0, "w": 30, "h": 2, "text": "这一页讲什么", "textScale": 2, "border": "none" },
 
-    { "id": "a", "type": "rect", "x": 2, "y": 4, "w": 13, "h": 5, "text": "一个概念\n第二行\n第三行" },
-    { "id": "b", "type": "rect", "x": 19, "y": 4, "w": 13, "h": 5, "text": "另一个概念\n和它的代价" },
+    { "id": "store", "type": "rect", "x": 2, "y": 4, "w": 14, "h": 10, "text": "存储", "border": "dashed" },
+    { "id": "a", "type": "rect", "x": 4, "y": 6, "w": 10, "h": 3, "text": "① 快照" },
+    { "id": "b", "type": "rect", "x": 4, "y": 10, "w": 10, "h": 3, "text": "② 日志" },
+    { "id": "c", "type": "rect", "x": 19, "y": 4, "w": 13, "h": 5, "text": "③ 索引" },
 
-    { "id": "c", "type": "rect", "x": 2, "y": 12, "w": 30, "h": 4, "text": "下面这行是结论，写清取舍，不写口号。", "border": "none" },
+    { "id": "note", "type": "rect", "x": 2, "y": 16, "w": 33, "h": 5, "border": "none", "text": "① 快照  每天一次全量\n② 日志  追加写，可重放\n③ 索引  只读，可重建" },
 
-    { "id": "e1", "type": "line", "a": "a", "b": "b", "arrow": "b" }
+    { "id": "e1", "type": "line", "a": "a", "b": "b", "arrow": "b" },
+    { "id": "e2", "type": "line", "a": "store", "b": "c", "arrow": "b" }
   ]
 }

@@ -328,7 +328,9 @@ lint 分 errors 和 warnings。errors 是“这份输入不成立”，warnings 
 
 **errors**：`missing_field`、`invalid_type`、`unknown_type`、`invalid_enum`、`not_integer`、`out_of_range`、`unknown_field`、`duplicate_id`、`dangling_line`。
 
-**warnings**：`out_of_bounds`、`partial_overlap`、`line_crosses_rect`、`text_overflow`、`text_scale_misaligned`。完全包含不算 overlap。
+**warnings**：`out_of_bounds`、`partial_overlap`、`line_crosses_rect`、`text_overflow`、`text_dense`、`text_scale_misaligned`。完全包含不算 overlap。
+
+**`text_dense` 是有边框的框里写成了段落。** 折行之后超过两行（`>= 3`）就报：框是标签，三行以上通常代表这里本该有几个子框，或者解释该下沉到页尾图例。无边框的 rect 就是写句子用的，不查；溢出另算 `text_overflow`，两者不叠加。只数行数，不判单行长短 —— 一行的结论句再长也不报。它是 warning 不是 error：照画，改不改由生成方判断。
 
 `line_crosses_rect` 只在**线真的穿过某个框的内部**时报（`ids` 是 `[线, 框]`）。三种情况不算：
 

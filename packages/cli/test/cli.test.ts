@@ -69,7 +69,8 @@ test('check --text prints the human report', async () => {
   const { file } = await tempBoard(board);
   const { code, out } = await call(['check', file, '--text']);
   assert.equal(code, 0);
-  assert.match(out, /capacity 12 列 × 2 行/);
+  assert.match(out, /a {2}6×2 {2}1\/2 行/);
+  assert.match(out, /summary: 2 个框有字，共 2 行，最长 a 1 行/);
   assert.match(out, /errors 0 {2}warnings 0/);
 });
 

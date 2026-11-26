@@ -59,6 +59,40 @@ test('reports text overflow', () => {
   assert.ok(result.warnings.some(error => error.code === 'text_overflow'));
 });
 
+test('reports a bordered rect that holds a paragraph', () => {
+  const result = lint({
+    tier: 'small',
+    elements: [rect('a', 0, 0, 6, 5, { text: '第一行\n第二行\n第三行' })]
+  });
+  const dense = result.warnings.filter(warning => warning.code === 'text_dense');
+  assert.equal(dense.length, 1);
+});
+
+test('text_dense leaves labels, legend lines and overflow alone', () => {
+  const label = lint({
+    tier: 'small',
+    elements: [rect('a', 0, 0, 6, 3, { text: 'LWW\n最后写入' })]
+  });
+  assert.equal(label.warnings.some(warning => warning.code === 'text_dense'), false);
+
+  const legend = lint({
+    tier: 'small',
+    elements: [
+      rect('note', 0, 0, 10, 4, { text: '① LWW 最后写入者胜\n② CRDT 冲突自动合并', border: 'none' })
+    ]
+  });
+  assert.equal(legend.warnings.some(warning => warning.code === 'text_dense'), false);
+
+  const overflow = lint({
+    tier: 'small',
+    elements: [rect('a', 0, 0, 6, 2, { text: '第一行\n第二行\n第三行' })]
+  });
+  assert.deepEqual(
+    overflow.warnings.map(warning => warning.code),
+    ['text_overflow']
+  );
+});
+
 test('reports text scale misalignment', () => {
   const result = lint({
     tier: 'small',
